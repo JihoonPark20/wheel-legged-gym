@@ -1,4 +1,4 @@
-# Isaac Gym Environments for Unitree B2-W #
+# Isaac Gym Environments for Unitree Go2-W and B2-W #
 ### Installation ###
 1. Create a new python virtual env with python 3.6, 3.7 or 3.8 (3.8 recommended)
 2. Install pytorch 1.10 with cuda-11.3:

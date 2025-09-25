@@ -358,7 +358,7 @@ class B2W(BaseTask):
         actions_scaled = actions * self.cfg.control.action_scale
         actions_scaled[:, [0, 4, 8, 12]] *= self.cfg.control.hip_scale_reduction
         torques = self.p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) * self.legged_mask_tensor \
-                - self.d_gains*self.dof_vel * self.wheeled_mask_tensor*self.cfg.control.vel_scale
+                - self.d_gains*(actions_scaled - self.dof_vel) * self.wheeled_mask_tensor*self.cfg.control.vel_scale
         return torch.clip(torques, -self.torque_limits, self.torque_limits)
 
     def _reset_dofs(self, env_ids):

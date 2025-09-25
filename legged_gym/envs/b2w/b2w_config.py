@@ -50,7 +50,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
         name = "b2w"
         foot_name = "foot"
         penalize_contacts_on = ["thigh", "calf"]
-        terminate_after_contacts_on = ["base"]
+        terminate_after_contacts_on = ["base", "hip"]
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
         flip_visual_attachments = True
         fix_base_link = False
@@ -81,12 +81,38 @@ class B2WRoughCfg( LeggedRobotCfg ):
             stand_still = -0.01
             dof_pos_limits = -0.9
 
-class B2WRoughCfgPPO( LeggedRobotCfgPPO ):
+class B2WFlatCfg( B2WRoughCfg ):
+    class env:
+        num_envs = 4096
+        num_observations = 56
+        num_privileged_obs = None
+        num_actions = 16
+        env_spacing = 3.
+        send_timeouts = True
+        episode_length_s = 20
+
+    class terrain( LeggedRobotCfg.terrain ):
+        mesh_type = 'plane'
+        measure_heights = False
+        curriculum = False
+        horizontal_scale = 0.2
+        vertical_scale = 0.0
+        border_size = 0.0
+        slope = 0.0
+        roughness = 0.0
+        num_rows = 1
+        num_cols = 1
+        spacing = 100.0
+        friction = 1.0
+        restitution = 0.0
+        rough_terrain_friction_range = [0.5, 1.25]
+        rough_terrain_restitution_range = [0.0, 0.0]
+        max_init_terrain_level = 3
+
+class B2WCfgPPO( LeggedRobotCfgPPO ):
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
-        experiment_name = 'rough_b2w'
+        experiment_name = 'b2w'
         max_iterations = 1500
-
-  

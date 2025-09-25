@@ -31,9 +31,14 @@
 from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
 from .base.legged_robot import LeggedRobot
 from .b2w.b2w import B2W
-from .b2w.b2w_config import B2WRoughCfg, B2WRoughCfgPPO
+from .b2w.b2w_config import B2WFlatCfg, B2WRoughCfg, B2WCfgPPO
+from .go2w.go2w import Go2W
+from .go2w.go2w_config import Go2WFlatCfg, Go2WRoughCfg, Go2WCfgPPO
 
 import os
 
 from legged_gym.utils.task_registry import task_registry
-task_registry.register( "b2w", B2W, B2WRoughCfg(), B2WRoughCfgPPO() )
+task_registry.register( "b2w", B2W, B2WRoughCfg(), B2WCfgPPO() )
+task_registry.register( "b2w_flat", B2W, B2WFlatCfg(), B2WCfgPPO() )
+task_registry.register( "go2w", Go2W, Go2WRoughCfg(), Go2WCfgPPO() )
+task_registry.register( "go2w_flat", Go2W, Go2WFlatCfg(), Go2WCfgPPO() )
