@@ -27,7 +27,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/base.dae" />
+          filename="../dae/base.dae" />
       </geometry>
       <material
         name="">
@@ -140,7 +140,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/hip.dae" />
+          filename="../dae/hip.dae" />
       </geometry>
       <material
         name="">
@@ -195,7 +195,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/thigh.dae" />
+          filename="../dae/thigh.dae" />
       </geometry>
       <material
         name="">
@@ -247,10 +247,10 @@ Stephen Brawner (brawner@gmail.com)
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="-1.5707963267948966 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/calf.stl" />
+          filename="../dae/calf.stl" />
       </geometry>
       <material
         name="">
@@ -387,7 +387,7 @@ Stephen Brawner (brawner@gmail.com)
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://go2w_description/dae/left_wheel.dae" />
+        <mesh filename="../dae/left_wheel.dae" />
       </geometry>
       <material
         name="">
@@ -398,7 +398,7 @@ Stephen Brawner (brawner@gmail.com)
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0.0 0" />
       <geometry>
-        <mesh filename="package://go2w_description/dae/left_wheel.dae" />
+        <mesh filename="../dae/left_wheel.dae" />
         <!-- <cylinder length="0.045" radius="0.086" /> -->
       </geometry>
     </collision>
@@ -443,7 +443,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="3.1415 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/hip.dae" />
+          filename="../dae/hip.dae" />
       </geometry>
       <material
         name="">
@@ -498,7 +498,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/thigh_mirror.dae" />
+          filename="../dae/thigh_mirror.dae" />
       </geometry>
       <material
         name="">
@@ -550,10 +550,10 @@ Stephen Brawner (brawner@gmail.com)
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="-1.5707963267948966 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/calf_mirror.stl" />
+          filename="../dae/calf_mirror.stl" />
       </geometry>
       <material
         name="">
@@ -691,7 +691,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/right_wheel.dae" />
+          filename="../dae/right_wheel.dae" />
       </geometry>
       <material
         name="">
@@ -702,7 +702,7 @@ Stephen Brawner (brawner@gmail.com)
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 -0.0 0" />
       <geometry>
-        <mesh filename="package://go2w_description/dae/right_wheel.dae" />
+        <mesh filename="../dae/right_wheel.dae" />
         <!-- <cylinder length="0.045" radius="0.086" /> -->
       </geometry>
     </collision>
@@ -746,7 +746,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 3.1415 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/hip.dae" />
+          filename="../dae/hip.dae" />
       </geometry>
       <material
         name="">
@@ -801,7 +801,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/thigh.dae" />
+          filename="../dae/thigh.dae" />
       </geometry>
       <material
         name="">
@@ -853,10 +853,10 @@ Stephen Brawner (brawner@gmail.com)
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="-1.5707963267948966 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/calf.stl" />
+          filename="../dae/calf.stl" />
       </geometry>
       <material
         name="">
@@ -995,7 +995,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/left_wheel.dae" />
+          filename="../dae/left_wheel.dae" />
       </geometry>
       <material
         name="">
@@ -1006,7 +1006,7 @@ Stephen Brawner (brawner@gmail.com)
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0.0 0" />
       <geometry>
-        <mesh filename="package://go2w_description/dae/left_wheel.dae" />
+        <mesh filename="../dae/left_wheel.dae" />
         <!-- <cylinder length="0.045" radius="0.086" /> -->
       </geometry>
     </collision>
@@ -1050,7 +1050,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="3.1415 3.1415 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/hip.dae" />
+          filename="../dae/hip.dae" />
       </geometry>
       <material
         name="">
@@ -1105,7 +1105,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/thigh_mirror.dae" />
+          filename="../dae/thigh_mirror.dae" />
       </geometry>
       <material
         name="">
@@ -1157,10 +1157,10 @@ Stephen Brawner (brawner@gmail.com)
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="-1.5707963267948966 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/calf_mirror.stl" />
+          filename="../dae/calf_mirror.stl" />
       </geometry>
       <material
         name="">
@@ -1298,7 +1298,7 @@ Stephen Brawner (brawner@gmail.com)
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://go2w_description/dae/right_wheel.dae" />
+          filename="../dae/right_wheel.dae" />
       </geometry>
       <material
         name="">
@@ -1309,7 +1309,7 @@ Stephen Brawner (brawner@gmail.com)
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="0 -0.0 0" />
       <geometry>
-        <mesh filename="package://go2w_description/dae/right_wheel.dae" />
+        <mesh filename="../dae/right_wheel.dae" />
         <!-- <cylinder length="0.045" radius="0.086" /> -->
       </geometry>
     </collision>
