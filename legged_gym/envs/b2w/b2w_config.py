@@ -11,17 +11,17 @@ class B2WRoughCfg( LeggedRobotCfg ):
         episode_length_s = 20
     
     class init_state( LeggedRobotCfg.init_state ):
-        pos = [0.0, 0.0, 0.6] # x,y,z [m]
+        pos = [0.0, 0.0, 0.54] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            'FL_hip_joint': 0.1, 
-            'RL_hip_joint': 0.1, 
-            'FR_hip_joint': -0.1, 
-            'RR_hip_joint': -0.1, 
+            'FL_hip_joint': 0.0, 
+            'RL_hip_joint': 0.0, 
+            'FR_hip_joint': -0.0, 
+            'RR_hip_joint': -0.0, 
 
             'FL_thigh_joint': 0.8, 
-            'RL_thigh_joint': 1., 
+            'RL_thigh_joint': 0.8, 
             'FR_thigh_joint': 0.8, 
-            'RR_thigh_joint': 1., 
+            'RR_thigh_joint': 0.8, 
 
             'FL_calf_joint': -1.5, 
             'RL_calf_joint': -1.5, 
@@ -36,8 +36,8 @@ class B2WRoughCfg( LeggedRobotCfg ):
 
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
-        stiffness = {'hip_joint': 300.,'thigh_joint': 300.,'calf_joint': 300.,"foot_joint": 0.0} 
-        damping = {'hip_joint': 5.0,'thigh_joint': 5.0,'calf_joint': 5.0,"foot_joint": 5.0} 
+        stiffness = {'hip_joint': 160.,'thigh_joint': 160.,'calf_joint': 160.,"foot_joint": 0.0} 
+        damping = {'hip_joint': 5.0,'thigh_joint': 5.0,'calf_joint': 5.0,"foot_joint": 1.0} 
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         hip_scale_reduction = 0.5
@@ -49,6 +49,7 @@ class B2WRoughCfg( LeggedRobotCfg ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/b2w_description/urdf/b2w_description.urdf'
         name = "b2w"
         foot_name = "foot"
+        wheel_radius = 0.225
         penalize_contacts_on = ["thigh", "calf"]
         terminate_after_contacts_on = ["base", "hip"]
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
@@ -59,9 +60,14 @@ class B2WRoughCfg( LeggedRobotCfg ):
         soft_dof_pos_limit = 0.9
         soft_dof_vel_limit = 0.9
         soft_torque_limit = 1.
-        base_height_target = 0.55
+        base_height_target = 0.5
         tracking_sigma = 0.4
-        max_contact_force = 100.
+        max_contact_force = 200.
+        wheeled_torque_scale = 0.0
+        wheeled_joint_power_scale = 0.0
+        wheeled_dof_vel_scale = 0.0
+        wheeled_dof_acc_scale = 0.0
+        wheeled_action_rate_scale = 0.0
         only_positive_rewards = False
         class scales:
             termination = -0.8
@@ -79,7 +85,9 @@ class B2WRoughCfg( LeggedRobotCfg ):
             stumble = -0.1 
             action_rate = -0.0002
             stand_still = -0.01
+            feet_contact_forces = -0.00015
             dof_pos_limits = -0.9
+            wheel_noslip = 1.0
 
 class B2WFlatCfg( B2WRoughCfg ):
     class env:

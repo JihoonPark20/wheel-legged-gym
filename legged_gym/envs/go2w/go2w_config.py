@@ -49,6 +49,7 @@ class Go2WRoughCfg( LeggedRobotCfg ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/go2w_description/urdf/go2w_description.urdf'
         name = "go2w"
         foot_name = "foot"
+        wheel_radius = 0.1778
         penalize_contacts_on = ["thigh", "calf"]
         terminate_after_contacts_on = ["base", "hip"]
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
@@ -59,9 +60,14 @@ class Go2WRoughCfg( LeggedRobotCfg ):
         soft_dof_pos_limit = 0.9
         soft_dof_vel_limit = 0.9
         soft_torque_limit = 1.
-        base_height_target = 0.55
+        base_height_target = 0.34
         tracking_sigma = 0.4
         max_contact_force = 100.
+        wheeled_torque_scale = 0.1
+        wheeled_joint_power_scale = 0.1
+        wheeled_dof_vel_scale = 0.0
+        wheeled_dof_acc_scale = 0.1
+        wheeled_action_rate_scale = 0.1
         only_positive_rewards = False
         class scales:
             termination = -0.8
@@ -79,7 +85,9 @@ class Go2WRoughCfg( LeggedRobotCfg ):
             stumble = -0.1 
             action_rate = -0.0002
             stand_still = -0.01
+            feet_contact_forces = -0.0
             dof_pos_limits = -0.9
+            wheel_noslip = 0.0
 
 class Go2WFlatCfg( Go2WRoughCfg ):
     class env:

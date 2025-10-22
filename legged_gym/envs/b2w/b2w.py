@@ -109,6 +109,7 @@ class B2W(BaseTask):
         """
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_net_contact_force_tensor(self.sim)
+        self.gym.refresh_rigid_body_state_tensor(self.sim)
 
         self.episode_length_buf += 1
         self.common_step_counter += 1
@@ -358,7 +359,7 @@ class B2W(BaseTask):
         actions_scaled = actions * self.cfg.control.action_scale
         actions_scaled[:, [0, 4, 8, 12]] *= self.cfg.control.hip_scale_reduction
         torques = self.p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) * self.legged_mask_tensor \
-                - self.d_gains*(actions_scaled - self.dof_vel) * self.wheeled_mask_tensor*self.cfg.control.vel_scale
+                - self.d_gains*(self.dof_vel - actions_scaled*self.wheeled_mask_tensor*self.cfg.control.vel_scale)
         return torch.clip(torques, -self.torque_limits, self.torque_limits)
 
     def _reset_dofs(self, env_ids):
@@ -472,9 +473,11 @@ class B2W(BaseTask):
         actor_root_state = self.gym.acquire_actor_root_state_tensor(self.sim)
         dof_state_tensor = self.gym.acquire_dof_state_tensor(self.sim)
         net_contact_forces = self.gym.acquire_net_contact_force_tensor(self.sim)
+        rigid_body_state = self.gym.acquire_rigid_body_state_tensor(self.sim)
         self.gym.refresh_dof_state_tensor(self.sim)
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_net_contact_force_tensor(self.sim)
+        self.gym.refresh_rigid_body_state_tensor(self.sim)
 
         # create some wrapper tensors for different slices
         self.root_states = gymtorch.wrap_tensor(actor_root_state)
@@ -482,6 +485,10 @@ class B2W(BaseTask):
         self.dof_pos = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
         self.base_quat = self.root_states[:, 3:7]
+
+        self.rigid_body_state = gymtorch.wrap_tensor(rigid_body_state)[:self.num_envs * self.num_bodies, :]
+        self.foot_velocities = self.rigid_body_state.view(self.num_envs, self.num_bodies, 13)[:, self.feet_indices, 7:10]
+        self.foot_positions = self.rigid_body_state.view(self.num_envs, self.num_bodies, 13)[:, self.feet_indices, 0:3]
 
         self.contact_forces = gymtorch.wrap_tensor(net_contact_forces).view(self.num_envs, -1, 3) # shape: num_envs, num_bodies, xyz axis
 
@@ -737,6 +744,7 @@ class B2W(BaseTask):
         self.max_episode_length = np.ceil(self.max_episode_length_s / self.dt)
 
         self.cfg.domain_rand.push_interval = np.ceil(self.cfg.domain_rand.push_interval_s / self.dt)
+        self.wheel_radius = self.cfg.asset.wheel_radius
 
     def _draw_debug_vis(self):
         """ Draws visualizations for dubugging (slows down simulation a lot).
@@ -843,23 +851,33 @@ class B2W(BaseTask):
     
     def _reward_torques(self):
         # Penalize torques
-        return torch.sum(torch.square(self.torques), dim=1)
+        legged_torque = torch.sum(torch.square(self.torques[:, self.legged_mask]), dim=1)
+        wheeled_torque = torch.sum(torch.square(self.torques[:, self.wheeled_mask]), dim=1)
+        return legged_torque + self.cfg.rewards.wheeled_torque_scale * wheeled_torque
     
     def _reward_joint_power(self):
         #Penalize high power
-        return torch.sum(torch.abs(self.dof_vel) * torch.abs(self.torques), dim=1)
+        legged_joint_power = torch.sum(torch.abs(self.dof_vel[:, self.legged_mask] * self.torques[:, self.legged_mask]), dim=1)
+        wheeled_joint_power = torch.sum(torch.abs(self.dof_vel[:, self.wheeled_mask] * self.torques[:, self.wheeled_mask]), dim=1)
+        return legged_joint_power + self.cfg.rewards.wheeled_joint_power_scale * wheeled_joint_power
 
     def _reward_dof_vel(self):
         # Penalize dof velocities
-        return torch.sum(torch.square(self.dof_vel[:, self.legged_mask]), dim=1)
+        legged_dof_vel = torch.sum(torch.square(self.dof_vel[:, self.legged_mask]), dim=1)
+        wheeled_dof_vel = torch.sum(torch.square(self.dof_vel[:, self.wheeled_mask]), dim=1)
+        return legged_dof_vel + self.cfg.rewards.wheeled_dof_vel_scale * wheeled_dof_vel
     
     def _reward_dof_acc(self):
         # Penalize dof accelerations
-        return torch.sum(torch.square((self.last_dof_vel - self.dof_vel) / self.dt), dim=1)
+        legged_dof_acc = torch.sum(torch.square((self.last_dof_vel[:, self.legged_mask] - self.dof_vel[:, self.legged_mask]) / self.dt), dim=1)
+        wheeled_dof_acc = torch.sum(torch.square((self.last_dof_vel[:, self.wheeled_mask] - self.dof_vel[:, self.wheeled_mask]) / self.dt), dim=1)
+        return legged_dof_acc + self.cfg.rewards.wheeled_dof_acc_scale * wheeled_dof_acc
     
     def _reward_action_rate(self):
         # Penalize changes in actions
-        return torch.sum(torch.square(self.last_actions - self.actions), dim=1)
+        legged_action_rate = torch.sum(torch.square(self.last_actions[:, self.legged_mask] - self.actions[:, self.legged_mask]), dim=1)
+        wheeled_action_rate = torch.sum(torch.square(self.last_actions[:, self.wheeled_mask] - self.actions[:, self.wheeled_mask]), dim=1)
+        return legged_action_rate + self.cfg.rewards.wheeled_action_rate_scale * wheeled_action_rate
     
     def _reward_collision(self):
         # Penalize collisions on selected bodies
@@ -909,3 +927,17 @@ class B2W(BaseTask):
     def _reward_feet_contact_forces(self):
         # penalize high contact forces
         return torch.sum((torch.norm(self.contact_forces[:, self.feet_indices, :], dim=-1) -  self.cfg.rewards.max_contact_force).clip(min=0.), dim=1)
+    
+    def _reward_wheel_noslip(self):
+        wheel_contact = (self.contact_forces[:, self.wheeled_mask, 2] > 1.0)
+        
+        wheel_omega = self.dof_vel[:, self.wheeled_mask]
+        wheel_tangent_target = wheel_omega * self.wheel_radius
+
+        foot_velocities = self.rigid_body_state.view(self.num_envs, self.num_bodies, 13)[:, self.feet_indices, 7:10]
+        
+        long_slip = (foot_velocities[:, :, 0] - wheel_tangent_target)
+        long_slip = torch.where(wheel_contact, long_slip, torch.zeros_like(long_slip))
+        
+        long_slip_err = torch.mean(torch.abs(long_slip), dim=1)
+        return torch.exp(-long_slip_err / 0.2)
